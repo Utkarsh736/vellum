@@ -1,0 +1,9 @@
+[workspace]
+resolver = "2"
+members = ["core-lib", "desktop/src-tauri"]
+
+# Shared release profile knobs for all workspace members.
+[profile.release]
+lto = "thin"
+codegen-units = 1
+strip = "symbols"

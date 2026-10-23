@@ -1,0 +1,33 @@
+# Rust (workspace target/)
+target/
+
+# Node / frontend
+node_modules/
+dist/
+*.local
+
+# Tauri generated
+desktop/src-tauri/gen/
+
+# Android
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+android/app/src/main/jniLibs/**/*.so
+*.apk
+*.aab
+*.ap_
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*~
+
+# Env / secrets
+.env
+.env.*
+!.env.example

@@ -1,0 +1,46 @@
+[package]
+name = "vellum-core"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.77"
+description = "Vellum shared core: local-first book library, PDF/EPUB metadata extraction, reading progress"
+license = "MIT OR Apache-2.0"
+keywords = ["epub", "pdf", "ebook", "reader", "local-first"]
+categories = ["database", "parser-implementations"]
+
+[lib]
+name = "vellum_core"
+crate-type = ["lib", "cdylib", "staticlib"]
+
+[features]
+# Enables the `uniffi-bindgen` binary (used on the dev machine to generate
+# Kotlin bindings). Off by default so Android `.so` builds stay minimal and
+# do not pull in clap.
+cli = ["uniffi/cli"]
+
+[dependencies]
+# FFI layer: Kotlin bindings for Android (proc-macro mode, no UDL file).
+uniffi = "0.28"
+# Error ergonomics + JSON serialization for the future Tauri IPC layer.
+thiserror = "2"
+serde = { version = "1", features = ["derive"] }
+# SQLite. `bundled` compiles SQLite in — no system dependency on any platform.
+rusqlite = { version = "0.32", features = ["bundled"] }
+# PDF: lightweight, pure-Rust. Info-dictionary reads only, no text extraction
+# (privacy rule #3: we never index book content).
+lopdf = "0.32"
+# EPUB: read the zip container; parse container.xml + the OPF package.
+zip = { version = "2.2", default-features = false, features = ["deflate"] }
+quick-xml = "0.36"
+percent-encoding = "2"
+
+[dev-dependencies]
+tempfile = "3"
+zip = { version = "2.2", default-features = false, features = ["deflate"] }
+lopdf = "0.32"
+
+# Standalone binder generator. Built only with `--features cli`.
+[[bin]]
+name = "uniffi-bindgen"
+path = "src/bin/uniffi-bindgen.rs"
+required-features = ["cli"]

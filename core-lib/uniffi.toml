@@ -1,0 +1,4 @@
+# UniFFI binding configuration for the Android (Kotlin) frontend.
+[bindings.kotlin]
+package_name = "app.vellum.core"
+cdylib_name = "vellum_core"
