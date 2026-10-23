@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Vellum</string>
+
+    <!-- Content descriptions (TalkBack, Step 5) -->
+    <string name="cd_add_book">Add books to your library</string>
+    <string name="cd_back">Back to library</string>
+    <string name="cd_search">Search library</string>
+    <string name="cd_clear_search">Clear search</string>
+    <string name="cd_book_cover">Cover of %1$s</string>
+    <string name="cd_remove_book">Remove %1$s from library</string>
+    <string name="cd_next_page">Next page</string>
+    <string name="cd_previous_page">Previous page</string>
+    <string name="cd_page_indicator">Page %1$d of %2$d</string>
+    <string name="cd_larger_text">Larger text</string>
+    <string name="cd_smaller_text">Smaller text</string>
+
+    <!-- Library -->
+    <string name="section_all">All</string>
+    <string name="section_reading">Reading</string>
+    <string name="section_finished">Finished</string>
+    <string name="search_hint">Search title or author</string>
+    <string name="empty_title">Your shelf is empty</string>
+    <string name="empty_body">Add a PDF or EPUB from your device. Vellum never copies or uploads your books.</string>
+    <string name="empty_cta">Add a book</string>
+    <string name="privacy_note">100% offline · no permissions · no telemetry</string>
+    <string name="unknown_author">Unknown author</string>
+    <string name="finished_badge">Finished</string>
+
+    <!-- Removal -->
+    <string name="remove_title">Remove “%1$s” from Vellum?</string>
+    <string name="remove_body">The original file stays on your device. Only the library entry and cached cover are removed.</string>
+    <string name="remove_confirm">Remove</string>
+    <string name="remove_cancel">Keep</string>
+
+    <!-- Toasts -->
+    <string name="toast_added">Added %1$s</string>
+    <string name="toast_already_in_library">Already in your library</string>
+    <string name="toast_removed">Removed %1$s</string>
+    <string name="toast_import_failed">Couldn’t add that file: %1$s</string>
+    <string name="toast_unsupported">Only PDF and EPUB files are supported</string>
+
+    <!-- Reader -->
+    <string name="reader_open_failed">Couldn’t open this book: %1$s</string>
+    <string name="reader_permission_lost">Vellum no longer has access to this file. Re-pick it to keep reading — your progress is saved.</string>
+    <string name="reader_repick">Choose file again</string>
+    <string name="reader_retry">Retry</string>
+    <string name="reader_pdf_pages">PDF · %1$d pages</string>
+</resources>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Window background matches Paper light bg; Compose draws on top. -->
+    <color name="window_background">#F7F7F8</color>
+    <!-- Adaptive icon background: mid violet of the icon gradient. -->
+    <color name="ic_launcher_background">#7C3AED</color>
+</resources>

@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <!--
+    Vellum EPUB sandbox — hardened by design:
+    * CSP blocks every remote origin (the app also holds no INTERNET
+      permission, so this is defense-in-depth, not the only wall).
+    * epub.js opens from an in-memory ArrayBuffer fed by the Kotlin side —
+      the book is never written to disk and never fetched.
+    * allowScriptedContent:false — scripts inside the EPUB never execute.
+  -->
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'none';
+                 script-src 'self' 'unsafe-inline';
+                 style-src 'unsafe-inline';
+                 img-src data: blob: about:;
+                 font-src data: blob:;
+                 frame-src blob:;
+                 connect-src 'none';
+                 object-src 'none';
+                 base-uri 'none';
+                 form-action 'none'">
+  <style>
+    html, body { margin: 0; height: 100%; overflow: hidden; }
+    #target { height: 100%; }
+    /* Paper reading surface while the book loads */
+    body { background: #fcfcf9; }
+    body.dark { background: #141414; }
+  </style>
+</head>
+<body>
+  <div id="target" aria-label="EPUB content"></div>
+  <script src="./epub.min.js"></script>
+  <script>
+    (function () {
+      "use strict";
+
+      var chunks = [];
+      var chunkCount = -1;
+      var book = null;
+      var rendition = null;
+      var wantCfi = null;
+      var fontSize = 18;
+      var dark = false;
+
+      // ---- Byte feeding (chunked, from Kotlin via evaluateJavascript) ----
+      window.__vlFeed = function (index, b64) {
+        chunks[index] = b64;
+      };
+
+      // ---- Boot -----------------------------------------------------------
+      window.__vlStart = function (cfi, size, isDark) {
+        wantCfi = cfi || null;
+        fontSize = size || 18;
+        dark = !!isDark;
+        document.body.classList.toggle("dark", dark);
+
+        var total = 0, i;
+        for (i = 0; i < chunks.length; i++) total += chunks[i].length;
+        var bytes = new Uint8Array(total);
+        var off = 0;
+        for (i = 0; i < chunks.length; i++) {
+          var s = atob(chunks[i]);
+          for (var j = 0; j < s.length; j++) bytes[off + j] = s.charCodeAt(j);
+          off += s.length;
+        }
+        chunks = null; // let the base64 intermediates go
+
+        book = ePub(bytes.buffer);
+        rendition = book.renderTo(document.getElementById("target"), {
+          width: "100%",
+          height: "100%",
+          spread: "none",
+          allowScriptedContent: false
+        });
+
+        applyTheme();
+
+        rendition.on("relocated", function (loc) {
+          var pct = loc.start && loc.start.percentage;
+          if (pct == null) {
+            // Spine-index estimate — matches the desktop engine's fallback.
+            var spineLen = Math.max(1, book.spine ? book.spine.length : 1);
+            pct = Math.min(1, ((loc.start.index || 0) + 1) / spineLen);
+          }
+          VellumBridge.onRelocated(loc.start.cfi, pct);
+        });
+
+        rendition.display(wantCfi || undefined)
+          .then(function () { VellumBridge.onReady(); })
+          .catch(function (e) { VellumBridge.onError(String(e)); });
+      };
+
+      // ---- Runtime controls ------------------------------------------------
+      window.__vlSetAppearance = function (size, isDark) {
+        fontSize = size || fontSize;
+        dark = !!isDark;
+        document.body.classList.toggle("dark", dark);
+        applyTheme();
+      };
+
+      window.__vlNext = function () { if (rendition) rendition.next(); };
+      window.__vlPrev = function () { if (rendition) rendition.prev(); };
+
+      // ---- Paper reading theme ---------------------------------------------
+      // Spec: serif, 18px, line-height 1.6 — identical tokens to desktop.
+      function applyTheme() {
+        if (!rendition) return;
+        rendition.themes.default({
+          "body": {
+            "color": dark ? "#d6d6d0" : "#1a1a1a",
+            "background": dark ? "#141414" : "#fcfcf9",
+            "font-family": "Georgia, 'Noto Serif', serif",
+            "font-size": fontSize + "px",
+            "line-height": "1.6",
+            "padding": "0.4em !important"
+          },
+          "p": { "line-height": "1.6 !important" },
+          "a, a:link": { "color": dark ? "#a78bfa" : "#7c3aed" }
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
