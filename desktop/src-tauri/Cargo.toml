@@ -1,0 +1,25 @@
+[package]
+name = "vellum-desktop"
+version = "0.1.0"
+description = "Vellum — lightweight, private, 100% offline PDF/EPUB reader (desktop)"
+authors = ["Vellum"]
+edition = "2021"
+rust-version = "1.77"
+
+# The `_lib` suffix may seem redundant but it is necessary
+# to make the lib name appear as `vellum_desktop_lib` on macOS/iOS and
+# `vellum_desktop_lib.dll` on Windows.
+[lib]
+name = "vellum_desktop_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = ["protocol-asset"] }
+tauri-plugin-dialog = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+base64 = "0.22"
+vellum-core = { path = "../../core-lib" }

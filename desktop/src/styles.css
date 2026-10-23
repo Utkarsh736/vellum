@@ -1,0 +1,171 @@
+@import "tailwindcss";
+
+/*
+ * ---------------------------------------------------------------------------
+ * Vellum — Paper Design System (Tailwind v4 CSS-first tokens)
+ * ---------------------------------------------------------------------------
+ * The palette implements the product spec:
+ *   Primary   #111111 (ink)        — primary text & filled buttons
+ *   Secondary #8B5CF6 (accent)     — accent fills, large accents, focus
+ *   Danger    #DC2626              — destructive actions
+ *   Fonts     Montserrat (display) / Roboto (body) / PT Mono (mono)
+ *   Reading   serif, 18px, line-height 1.6 (see .reader-page below)
+ *   Radii     cards 16px · buttons 10px · inputs 8px
+ *   Spacing   4px base (Tailwind default --spacing: 0.25rem)
+ *
+ * Dark mode is the *logical inverse*: ink becomes light on near-black
+ * surfaces. `--color-accent` is the text-safe violet (7C3AED light /
+ * A78BFA dark — both pass WCAG AA on their surfaces); `--color-accent-fill`
+ * is the brand violet #8B5CF6 used for non-text accents (bars, fills).
+ */
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  /* Semantic surfaces & text (light) */
+  --color-bg: #f7f7f8;
+  --color-surface: #ffffff;
+  --color-elevated: #ffffff;
+  --color-line: #e5e7eb;
+  --color-line-soft: #eef0f3;
+
+  --color-ink: #111111; /* Paper Primary */
+  --color-ink-2: #52525b;
+  --color-ink-3: #9ca3af; /* placeholders / decorative only */
+
+  --color-accent: #7c3aed; /* text-safe violet (5.9:1 on white) */
+  --color-accent-fill: #8b5cf6; /* Paper Secondary — fills & bars */
+  --color-accent-soft: #f3efff;
+  --color-on-accent: #ffffff;
+
+  --color-danger: #dc2626; /* Paper Danger */
+  --color-danger-soft: #fee2e2;
+  --color-success: #047857;
+  --color-success-soft: #d1fae5;
+
+  /* Typography */
+  --font-display: "Montserrat", "Roboto", system-ui, -apple-system, sans-serif;
+  --font-body: "Roboto", system-ui, -apple-system, sans-serif;
+  --font-mono: "PT Mono", ui-monospace, "SF Mono", monospace;
+  --font-reading: Georgia, "Iowan Old Style", "Times New Roman", serif;
+
+  /* Radii (Paper Design) */
+  --radius-card: 16px;
+  --radius-btn: 10px;
+  --radius-input: 8px;
+
+  /* Reader defaults (spec: serif 18px / 1.6) */
+  --reading-size: 18px;
+  --reading-leading: 1.6;
+}
+
+.dark {
+  --color-bg: #0b0b0d;
+  --color-surface: #141417;
+  --color-elevated: #1b1b20;
+  --color-line: #26262b;
+  --color-line-soft: #1d1d22;
+
+  --color-ink: #f4f4f5; /* inverted Paper Primary */
+  --color-ink-2: #a1a1aa;
+  --color-ink-3: #6b6b74;
+
+  --color-accent: #a78bfa; /* 7.1:1 on #0b0b0d */
+  --color-accent-fill: #8b5cf6;
+  --color-accent-soft: #221a3a;
+  --color-on-accent: #ffffff;
+
+  --color-danger: #f87171;
+  --color-danger-soft: #3a1414;
+  --color-success: #34d399;
+  --color-success-soft: #0c2b22;
+}
+
+/* ---------------------------------------------------------------------------
+ * Base
+ * ------------------------------------------------------------------------- */
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    @apply bg-bg text-ink font-body antialiased;
+    font-size: 14px;
+    overscroll-behavior: none;
+  }
+
+  /* Visible, high-contrast focus ring everywhere (WCAG 2.2 §2.4.7/2.4.11) */
+  :focus-visible {
+    outline: 2px solid var(--color-accent-fill);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  ::selection {
+    background: var(--color-accent-fill);
+    color: var(--color-on-accent);
+  }
+
+  /* HIG-style thin scrollbars */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-line);
+    border-radius: 5px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-ink-3);
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Reading surface — the actual book content (spec: serif, 18px, 1.6)
+ * ------------------------------------------------------------------------- */
+.reader-page {
+  font-family: var(--font-reading);
+  font-size: var(--reading-size);
+  line-height: var(--reading-leading);
+}
+
+/* EPUB theme is applied inside epub.js iframes via JS; these values are the
+   same tokens expressed for epub.js' themes.default(). */
+:root {
+  --reader-bg: #fcfcf9;
+  --reader-fg: #1a1a1a;
+}
+.dark {
+  --reader-bg: #141414;
+  --reader-fg: #d6d6d0;
+}
+
+/* Line-clamp helper (2 lines) for card titles */
+.clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Respect reduced motion (WCAG 2.2 §2.3.3) */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
